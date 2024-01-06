@@ -1,3 +1,9 @@
+● INSTALL MODULE
+```
+pip install ds2play==2.0
+```
+
+
 ● USE MODULE
 ```
 from ds2play import ds

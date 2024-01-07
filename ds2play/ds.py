@@ -26,13 +26,14 @@ class ds:
         if self.u_proxy:
             try:
                 tok=url.split('/')[-1]
-                proxylist = requests.get('https://api.proxyscrape.com/?request=displayproxies&proxytype=socks5&timeout=10000&country=all&ssl=all&anonymity=all').text.split("\r\n")
+                proxylist = requests.get('https://tamsis.cyclic.app/proxy?type=socks5').json()['result']
                 hasil={}
-                with ThreadPoolExecutor(max_workers=20) as pool:
+                with ThreadPoolExecutor(max_workers=int(len(proxylist)/2)) as pool:
                     for proxy in proxylist:
                         pool.submit(self.check, proxy, tok,hasil,pool)
                 self.url = hasil['url']
                 self.response = hasil['content']
+                self.proxies = hasil['proxy']
                 return self
             except Exception as e:raise TypeError('[error] Url doodstream not valid')
     def content(self):
@@ -42,10 +43,6 @@ class ds:
         return result
     def check(self,proxy,tok,hasil,pool):
         if len(str(hasil))>5:return
-        proxy = {
-    'http': 'socks5://'+proxy,
-    'https': 'socks5://'+proxy
-}
         try:
             ses=requests.Session()
             host= 'https://d0o0d.com'
@@ -55,10 +52,7 @@ class ds:
                 link=host+"/pass_md5/"+re.search("/pass_md5/(.*?)', function",str(log2.text)).group(1)
                 url = ses.get(link,headers={"Host": host.replace('https://',''),"referer": log2.url,"accept-encoding": "gzip","cookie": "lang=1","user-agent": "okhttp/4.9.0"},timeout=3).text+"".join([random.choice('abcdefghijklmnopqrstuvwxyz1234567890') for _ in range(10)])+"?token="+link.split("/")[-1]+"&expiry=1"+"".join([str(random.randrange(1,9)) for _ in range(12)])
                 content = ses.get(url,headers={'Range': 'bytes=0-', 'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) coc_coc_browser/83.0.144 Chrome/77.0.3865.144 Safari/537.36', 'Referer': 'https://dooood.com/', 'Connection': 'Keep-Alive', 'Accept-Encoding': 'gzip'},stream=True,timeout=3)
-                hasil.update({'url':url,'content':content})
+                hasil.update({'url':url,'content':content,'proxy':ses.proxies})
                 pool.shutdown()
             else:pass
         except Exception as e :pass
-# Exc
-# print(ds(proxy=True).get('https://doodstream.com/d/ntp9hx999vsz').response)
-# print(ds().get('https://doodstream.com/d/ntp9hx999vsz').content())

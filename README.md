@@ -1,17 +1,17 @@
 ● INSTALL MODULE
 ```
-pip install ds2play==2.0
+pip install ds2play==3.1
 ```
 
 
 ● USE MODULE
 ```
 from ds2play import ds
-sd = ds.ds()
+sd = ds()
 result = sd.get("https://ds2play.com/e/ollbtbz0n0u7")
 print(result.content()) # <Response [206]> #
 print(result.url) # read url videos #
-pd = ds.ds(proxy=True)
+pd = ds(proxy=True)
 result2 = pd.get("https://ds2play.com/e/ollbtbz0n0u7")
 print(result2.response) # <Response [206]> #
 print(result2.content()) # error #
